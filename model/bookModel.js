@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-// Ma'lumotlar omboriga saqlanishi kerak bo'lgan kitob sxemasi
-const kitobSxemasi = mongoose.Schema(
+// Ma'lumotlar omboriga saqlanishi kerak bo'lgan flowers sxemasi
+const flowersSxemasi = mongoose.Schema(
     {
         nomi: String,
         narxi: Number,
@@ -19,4 +19,4 @@ const kitobSxemasi = mongoose.Schema(
 );
 
 // Sxema asosida tuzilgan model, u bizga class qaytarib beradi
-module.exports = mongoose.model("kitob", kitobSxemasi);
+module.exports = mongoose.model("flowers", flowersSxemasi);

@@ -1,10 +1,10 @@
-const Books = require("../model/bookModel");
+const Flowerss = require("../model/bookModel");
 const Joi = require('joi');
 const Auth = require("../model/authModel");
 const mongoose = require('mongoose');
 const { ObjectId } = mongoose.Types;
 
-const getAllBooksFunc = async (req, res) => {
+const getAllFlowerssFunc = async (req, res) => {
     try {
         const { nomi, cat } = req.query;
         const nomiRegEx = new RegExp(nomi, "i");
@@ -19,12 +19,12 @@ const getAllBooksFunc = async (req, res) => {
             }
         }
 
-        const books = await Books
+        const books = await Flowerss
             .find(query)
             .populate("avtor")
             .populate("cat");
 
-        // Barcha kitoblar ro'yhatini clientga qaytarish
+        // Barcha flowerslar ro'yhatini clientga qaytarish
         res.status(200).json(books);
     } catch (error) {
         console.log(error.message);
@@ -32,24 +32,24 @@ const getAllBooksFunc = async (req, res) => {
     }
 };
 
-const getOneBookFunc = async (req, res) => {
+const getOneFlowersFunc = async (req, res) => {
     try {
         const id = req.params.id;
-        // Ma'lumotlar omboridan kitobni izlab topish
-        const book = await Books.findById(id)
+        // Ma'lumotlar omboridan flowersni izlab topish
+        const flowers = await Flowerss.findById(id)
             .populate("avtor")
             .populate("cat");
-        // Izlash natijasida kitob topilmasa
-        if (!book) return res.status(404).send("Afsuski kitob topilmadi!");
-        // Topilgan kitobni clientga qaytarib berish
-        res.status(200).send(book);
+        // Izlash natijasida flowers topilmasa
+        if (!flowers) return res.status(404).send("Afsuski flowers topilmadi!");
+        // Topilgan flowersni clientga qaytarib berish
+        res.status(200).send(flowers);
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
 
-const createNewBookFunc = async (req, res) => {
+const createNewFlowersFunc = async (req, res) => {
     try {
         const role = req.authRole;
         if (!role) return res.status(403).send("Sizga buni qilish taqiqlangan!");
@@ -58,57 +58,57 @@ const createNewBookFunc = async (req, res) => {
         const { error } = validateFunction(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
-        // Agar validatsiya jarayonida hech qanday xato kuzatilmasa, u holda yangi kitob obyetki tuziladi
-        const newBook = new Books(req.body);
+        // Agar validatsiya jarayonida hech qanday xato kuzatilmasa, u holda yangi flowers obyetki tuziladi
+        const newFlowers = new Flowerss(req.body);
 
-        // Hosil bo'lgan yangi kitob obyektini kitoblar ro'yhatiga qo'shish
-        await newBook.save();
+        // Hosil bo'lgan yangi flowers obyektini flowerslar ro'yhatiga qo'shish
+        await newFlowers.save();
 
-        // Clientga yangi kitobni qaytarish
-        res.status(201).json({ data: newBook, message: "Yangi kitob qo'shildi" });
+        // Clientga yangi flowersni qaytarish
+        res.status(201).json({ data: newFlowers, message: "Yangi flowers qo'shildi" });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
 
-const updateBookFunc = async (req, res) => {
+const updateFlowersFunc = async (req, res) => {
     try {
         const id = req.params.id;
 
-        // Yangi kitob ma'lumotlarini validatsiya qilish
+        // Yangi flowers ma'lumotlarini validatsiya qilish
         const { error } = validateFunction(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
-        // Kitobni yangilash
-        const updatedBook = await Books.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedBook) return res.status(404).send("Afsuski kitob topilmadi!");
+        // flowersni yangilash
+        const updatedFlowers = await Flowerss.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updatedFlowers) return res.status(404).send("Afsuski flowers topilmadi!");
 
-        // Clientga yangilangan kitobni qaytarish
-        res.status(200).send(updatedBook);
+        // Clientga yangilangan flowersni qaytarish
+        res.status(200).send(updatedFlowers);
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
 
-const deleteBookFunc = async (req, res) => {
+const deleteFlowersFunc = async (req, res) => {
     try {
-        // Ko'rsatilgan kitobni index'ni izlab topish
-        const deletedBook = await Books.findByIdAndDelete(req.params.id);
-        if (!deletedBook) return res.status(404).send("Afsuski kitob topilmadi!");
+        // Ko'rsatilgan flowersni index'ni izlab topish
+        const deletedFlowers = await Flowerss.findByIdAndDelete(req.params.id);
+        if (!deletedFlowers) return res.status(404).send("Afsuski flowers topilmadi!");
 
-        // O'chirib yuborilgan kitobni clientga qaytarish
-        res.status(200).send(deletedBook);
+        // O'chirib yuborilgan flowersni clientga qaytarish
+        res.status(200).send(deletedFlowers);
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
 
-const getBooksByCategory = async (req, res) => {
+const getFlowerssByCategory = async (req, res) => {
     try {
-        const books = await Books.find({ cat: req.params.categoryId }).populate("avtor cat");
+        const books = await Flowerss.find({ cat: req.params.categoryId }).populate("avtor cat");
         res.status(200).json(books);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -116,7 +116,7 @@ const getBooksByCategory = async (req, res) => {
 };
 
 // Validate funksiyasi
-const validateFunction = (book) => {
+const validateFunction = (flowers) => {
     // Validate schema - sxemada obyektni qanday xossalari bo’lishi kerakligi va o’sha xossalarni turlari qanaqa bo’lishi, xossani qiymati eng kamida qancha bo’lishi yoki eng uzog’i bilan qancha bo’lishi ko'rsatib o'tiladi.
     const schema = Joi.object({
         nomi: Joi.string().required().min(3).max(30),
@@ -128,14 +128,14 @@ const validateFunction = (book) => {
     });
 
     // Validatsiya natijasini funksiyaga qaytarish
-    return schema.validate(book);
+    return schema.validate(flowers);
 };
 
 module.exports = {
-    getAllBooksFunc,
-    getOneBookFunc,
-    createNewBookFunc,
-    updateBookFunc,
-    deleteBookFunc,
-    getBooksByCategory
+    getAllFlowerssFunc,
+    getOneFlowersFunc,
+    createNewFlowersFunc,
+    updateFlowersFunc,
+    deleteFlowersFunc,
+    getFlowerssByCategory
 };
