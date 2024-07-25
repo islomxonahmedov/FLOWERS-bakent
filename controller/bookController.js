@@ -24,7 +24,6 @@ const getAllFlowerssFunc = async (req, res) => {
             .populate("avtor")
             .populate("cat");
 
-        // Barcha flowerslar ro'yhatini clientga qaytarish
         res.status(200).json(books);
     } catch (error) {
         console.log(error.message);

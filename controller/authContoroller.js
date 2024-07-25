@@ -2,9 +2,6 @@ const passwordComplexity = require("joi-password-complexity");
 const Auth = require('../model/authModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const sendMail = require("../config/sendMail");
-const Verification = require("../model/verificationModel");
-// const sendMailForPass = require("../config/sendMailForPass");
 const signUpFunction = async (req, res) => {
     try {
         const { fullname, email, password, role } = req.body;
@@ -24,11 +21,6 @@ const signUpFunction = async (req, res) => {
             verified: false,
         });
 
-        // todo: Ro'yhatdan o'tgan foydalanuvchi uchun email xabar jo'natish funksiyasi
-        sendMail(newAuth);
-
-        // todo: Ushbu holatda ya'ni email muvaffaqiyatli jo'natilganidan so'ng vaziyatga qarab foydalanuvchi ma'lumotlarini chaqiruvchiga qaytarib berish eng to'g'ri yo'l bo'ldi
-        // ? res.status(201).header("x-token", token).json(newAuth);
         res.status(200).json({ message: "Xabar muvaffaqiyatli jo'natildi" });
     } catch (error) {
         console.log(error.message);
@@ -70,35 +62,6 @@ const getAuth = async (req, res) => {
     }
 };
 
-const verificateUser = async (req, res) => {
-    try {
-        const { userId, uniqueId } = req.params;
-        // todo: Eng avval verification modelidan kelgan so'rov bo'yicha ma'lumot bor yoki yo'qligini tekshirib olish zarur
-        const existingVerification = await Verification.findOne({ userId });
-        // todo: Agar yo'q bo'lsa mos ravishda html sahifani qaytarish
-        if (!existingVerification) return res.render('error', { message: "Verifikatsiyadan o'tishda xatolik yoki allaqachon verifikatsiya qilib bo'lindi" });
-        // todo: Agar bor bo'lsa verifikatsiyani muddatini tekshirish
-        if (existingVerification.expiresIn < Date.now()) {
-            // todo: Agar muddati o'tgan bo'lsa mos ravishda html sahifani qaytarish va verification model ma'lumoti hamda foydalanuvchi ma'lumotlarini database dan o'chirib yuborish
-            await Verification.deleteOne({ userId });
-            await Auth.findByIdAndDelete(userId);
-            res.render('error', { message: "Afsuski amal qilish muddati tugadi, oldinroq kirish kerak edi. Yoki boshqatdan ro'yhatdan o'ting!" });
-        }
-        else {
-            // todo: Aks holda uniqueId yordamida ma'lumotni asl ekanligi tekshiriladi, agar xatolik bo'lsa mos ravishda html sahifa qaytariladi
-            const isValid = await bcrypt.compare(uniqueId, existingVerification.uniqueId);
-            if (!isValid) return res.render('error', { message: "Verifikatsiya ma'lumotlari yaroqsiz, iltimos qayta tekshirib ko'ring!" });
-            // todo: Agar shu yergacham yetib kelsa u holda foydalanuvchi ma'lumotlari o'zgartiriladi qaysiki verified: false => verified: true
-            await Auth.findByIdAndUpdate(userId, { verified: true });
-            // todo: So'ng verification model ma'lumotlari o'chirilib yuboriladi
-            await Verification.deleteMany({ userId });
-            res.render('verified', { message: "Verifikatsiya muvaffaqiyatli tugallandi, sahifani yopib, hisobingizga kiring" });
-        }
-    } catch (error) {
-        console.log(error.message);
-        res.render('error', { message: error.message });
-    }
-};
 
 const validatePasswordFunction = (password) => {
     const schema = {
@@ -118,5 +81,4 @@ module.exports = {
     signUpFunction,
     signInFunction,
     getAuth,
-    verificateUser,
 };
