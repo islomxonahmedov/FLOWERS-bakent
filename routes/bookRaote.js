@@ -9,6 +9,7 @@ const {
     getFlowerssByCategory
 } = require('../controller/bookController');
 const authentication = require('../midilwere/authentication');
+const upload = require('../config/milter');
 
 
 // Barcha flowerslarni olishga mo'ljallangan route

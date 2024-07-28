@@ -57,14 +57,14 @@ const createNewFlowersFunc = async (req, res) => {
         const { error } = validateFunction(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
-        // Agar validatsiya jarayonida hech qanday xato kuzatilmasa, u holda yangi flowers obyetki tuziladi
+        // Agar validatsiya jarayonida hech qanday xato kuzatilmasa, u holda yangi kitob obyetki tuziladi
         const newFlowers = new Flowerss(req.body);
 
-        // Hosil bo'lgan yangi flowers obyektini flowerslar ro'yhatiga qo'shish
+        // Hosil bo'lgan yangi kitob obyektini kitoblar ro'yhatiga qo'shish
         await newFlowers.save();
 
-        // Clientga yangi flowersni qaytarish
-        res.status(201).json({ data: newFlowers, message: "Yangi flowers qo'shildi" });
+        // Clientga yangi kitobni qaytarish
+        res.status(201).json({ data: newFlowers, message: "Yangi kitob qo'shildi" });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
@@ -136,5 +136,5 @@ module.exports = {
     createNewFlowersFunc,
     updateFlowersFunc,
     deleteFlowersFunc,
-    getFlowerssByCategory
+    getFlowerssByCategory,
 };
