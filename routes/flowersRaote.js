@@ -7,7 +7,7 @@ const {
     updateFlowersFunc,
     deleteFlowersFunc,
     getFlowerssByCategory
-} = require('../controller/bookController');
+} = require('../controller/flowersController');
 const authentication = require('../midilwere/authentication');
 const upload = require('../config/milter');
 

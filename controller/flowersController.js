@@ -1,4 +1,4 @@
-const Flowerss = require("../model/bookModel");
+const Flowerss = require("../model/FlowersModel");
 const Joi = require('joi');
 const Auth = require("../model/authModel");
 const mongoose = require('mongoose');
@@ -53,23 +53,19 @@ const createNewFlowersFunc = async (req, res) => {
         const role = req.authRole;
         if (!role) return res.status(403).send("Sizga buni qilish taqiqlangan!");
 
-        // Serverga kelgan so'rovni tekshirish
         const { error } = validateFunction(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
-        // Agar validatsiya jarayonida hech qanday xato kuzatilmasa, u holda yangi kitob obyetki tuziladi
         const newFlowers = new Flowerss(req.body);
-
-        // Hosil bo'lgan yangi kitob obyektini kitoblar ro'yhatiga qo'shish
         await newFlowers.save();
 
-        // Clientga yangi kitobni qaytarish
         res.status(201).json({ data: newFlowers, message: "Yangi kitob qo'shildi" });
     } catch (error) {
         console.log(error.message);
         res.status(500).send(error.message);
     }
 };
+
 
 const updateFlowersFunc = async (req, res) => {
     try {
@@ -120,9 +116,12 @@ const validateFunction = (flowers) => {
     const schema = Joi.object({
         nomi: Joi.string().required().min(3).max(30),
         narxi: Joi.number(),
+        width: Joi.number(),
+        height: Joi.number(),
         cat: Joi.string(),
-        img: Joi.string(),
+        img: Joi.array().items(Joi.string()).required(),
         description: Joi.string(),
+        description2: Joi.string(),
         avtor: Joi.string(),
     });
 
