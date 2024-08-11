@@ -6,7 +6,8 @@ const {
     createNewFlowersFunc,
     updateFlowersFunc,
     deleteFlowersFunc,
-    getFlowerssByCategory
+    getFlowerssByCategory,
+    addCommentToFlower
 } = require('../controller/flowersController');
 const authentication = require('../midilwere/authentication');
 const upload = require('../config/milter');
@@ -23,6 +24,7 @@ router.put('/:id', updateFlowersFunc);
 // Ko'rsatilgan flowersni ma'lumotlar omboridan o'chirib yuborish
 router.delete('/:id', deleteFlowersFunc);
 router.get('/byCategory/:categoryId', getFlowerssByCategory);
+router.post("/:id/comment", addCommentToFlower);
 
 // Routerni export qilish
 module.exports = router;

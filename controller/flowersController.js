@@ -110,12 +110,41 @@ const getFlowerssByCategory = async (req, res) => {
     }
 };
 
+const addCommentToFlower = async (req, res) => {
+    try {
+        const flowerId = req.params.id;
+        const { text, rating } = req.body;
+        const avtor = req.user ? req.user._id : null; 
+
+        const flower = await Flowerss.findById(flowerId);
+
+        if (!flower) {
+            return res.status(404).send('Flower topilmadi');
+        }
+
+        flower.comments.push({ text, rating, avtor });
+
+        const totalRatings = flower.comments.reduce((acc, comment) => acc + comment.rating, 0);
+        flower.total = totalRatings / flower.comments.length;
+
+        await flower.save();
+
+        res.status(200).send(flower);
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send('Sharx qo\'shishda xatolik');
+    }
+};
+
+
+
 // Validate funksiyasi
 const validateFunction = (flowers) => {
     // Validate schema - sxemada obyektni qanday xossalari bo’lishi kerakligi va o’sha xossalarni turlari qanaqa bo’lishi, xossani qiymati eng kamida qancha bo’lishi yoki eng uzog’i bilan qancha bo’lishi ko'rsatib o'tiladi.
     const schema = Joi.object({
-        nomi: Joi.string().required().min(3).max(30),
+        nomi: Joi.string().required().min(3).max(45),
         narxi: Joi.number(),
+        price: Joi.number(),
         width: Joi.number(),
         height: Joi.number(),
         cat: Joi.string(),
@@ -136,4 +165,5 @@ module.exports = {
     updateFlowersFunc,
     deleteFlowersFunc,
     getFlowerssByCategory,
+    addCommentToFlower
 };

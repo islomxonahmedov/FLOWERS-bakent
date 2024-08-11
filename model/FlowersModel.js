@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const flowersSxemasi = mongoose.Schema(
     {
         nomi: String,
+        price: Number,
         narxi: Number,
         width: Number,
         height: Number,
@@ -12,11 +13,13 @@ const flowersSxemasi = mongoose.Schema(
         description: String,
         description2: String,
         avtor: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
+        sales: { type: Number, default: 0 },
         comments: [{
             text: String,
             rating: Number,
             avtor: { type: mongoose.Schema.Types.ObjectId, ref: "auth" },
-        }]
+        }],
+        total: { type: Number, default: 0 }
     },
     { timestamps: true }
 );
