@@ -85,7 +85,7 @@ const removeFromLikeFunc = async (req, res) => {
 
         // Agar savat topilmasa yoki bo'sh bo'lsa, xabar qaytarish
         if (!like || !like.items || like.items.length === 0) {
-            return res.status(200).json({ message: "Sizning basketingizda mahsulot topilmadi" });
+            return res.status(200).json({ message: "Sizning basketingizda mahsulot topilmadii" });
         }
 
         // Savatdan mahsulotni o'chirish
