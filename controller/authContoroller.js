@@ -8,21 +8,38 @@ const signUpFunction = async (req, res) => {
     try {
         const { fullname, email, password, role } = req.body;
 
+        // Tekshirish: Email avvaldan mavjud bo'lsa, xatolik qaytarish
         const existingAuth = await Auth.findOne({ email });
         if (existingAuth) return res.status(400).send("Ushbu elektron pochta avval foydalanilgan");
 
+        // Parolni tekshirish
         const { error } = await validatePasswordFunction(password);
         if (error) return res.status(400).send(error.details[0].message);
 
+        // Parolni xesh qilish
         const hashedPassword = await bcrypt.hash(password, 15);
+
+        // To'liq ismdan (fullname) firstName va lastName ni ajratib olish
+        const names = fullname.split(' ');
+        const firstName = names[0];
+        const lastName = names[1] || ''; // Agar familiya bo'lmasa, bo'sh string
+
+        // Avatar URL generatsiya qilish
+        const avatarUrl = `https://avatar.iran.liara.run/username?username=${firstName}+${lastName}`;
+
+        console.log("Generated Avatar URL:", avatarUrl);
+
+        // Yangi foydalanuvchi yaratish
         const newAuth = await Auth.create({
             fullname,
             email,
             password: hashedPassword,
             role,
             verified: false,
+            avatar: avatarUrl,
         });
 
+        // Foydalanuvchiga xabar yuborish
         sendMail(newAuth);
         res.status(200).json({ message: "Xabar muvaffaqiyatli jo'natildi" });
     } catch (error) {
@@ -30,6 +47,7 @@ const signUpFunction = async (req, res) => {
         res.status(500).json(error);
     }
 };
+
 const signInFunction = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -91,6 +109,24 @@ const verificateUser = async (req, res) => {
         res.render('error', { message: error.message });
     }
 };
+const getOtherUsers = async (req, res) => {
+    try {
+        const currentUserId = req.authId;
+        console.log("Current User ID:", currentUserId);
+        
+        const users = await Auth.find({ _id: { $ne: currentUserId } });
+        
+        if (users.length === 0) {
+            return res.status(404).json("Boshqa userlar topilmadi");
+        }
+
+        res.status(200).json(users);
+    } catch (error) {
+        console.error("Error fetching users:", error);
+        res.status(500).json({ message: "Xato yuz berdi" });
+    }
+};
+
 
 
 const validatePasswordFunction = (password) => {
@@ -112,4 +148,5 @@ module.exports = {
     signInFunction,
     getAuth,
     verificateUser,
+    getOtherUsers
 };

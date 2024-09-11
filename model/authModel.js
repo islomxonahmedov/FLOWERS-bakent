@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const authSchema = new mongoose.Schema(
     {
@@ -23,8 +23,17 @@ const authSchema = new mongoose.Schema(
             type: Boolean,
             default: false
         },
+        avatar: {
+            type: String,
+            default: ''
+        },
+        status: {
+            type: String,
+            enum: ['Active', 'Idle'],
+            default: 'Idle'
+        },
     },
     { timestamps: true }
 );
 
-module.exports = mongoose.model("auth", authSchema);
+module.exports = mongoose.model('auth', authSchema);

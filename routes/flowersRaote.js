@@ -24,7 +24,7 @@ router.put('/:id', updateFlowersFunc);
 // Ko'rsatilgan flowersni ma'lumotlar omboridan o'chirib yuborish
 router.delete('/:id', deleteFlowersFunc);
 router.get('/byCategory/:categoryId', getFlowerssByCategory);
-router.post("/:id/comment", addCommentToFlower);
+router.post("/:id/comment", authentication, addCommentToFlower);
 
 // Routerni export qilish
 module.exports = router;

@@ -50,9 +50,6 @@ const getOneFlowersFunc = async (req, res) => {
 
 const createNewFlowersFunc = async (req, res) => {
     try {
-        const role = req.authRole;
-        if (!role) return res.status(403).send("Sizga buni qilish taqiqlangan!");
-
         const { error } = validateFunction(req.body);
         if (error) return res.status(400).send(error.details[0].message);
 
@@ -114,7 +111,7 @@ const addCommentToFlower = async (req, res) => {
     try {
         const flowerId = req.params.id;
         const { text, rating } = req.body;
-        const avtor = req.user ? req.user._id : null; 
+        const avtor = req.authId;
 
         const flower = await Flowerss.findById(flowerId);
 
