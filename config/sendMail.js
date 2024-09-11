@@ -3,7 +3,7 @@ const mailOptions = require("./mailOption");
 const transporter = require("./transporint");
 const Verification = require('../model/verificationMoadal');
 const { v4: uuidv4 } = require('uuid');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 module.exports = async function ({ _id, email }) {
     checkTranfporterWork();
