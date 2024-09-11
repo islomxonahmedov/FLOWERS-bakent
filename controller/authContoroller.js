@@ -1,6 +1,6 @@
 const passwordComplexity = require("joi-password-complexity");
 const Auth = require('../model/authModel');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sendMail = require("../config/sendMail");
 const Verification = require("../model/verificationMoadal");
